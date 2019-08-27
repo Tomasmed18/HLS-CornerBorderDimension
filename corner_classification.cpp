@@ -45,95 +45,58 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, XF_NPPC1> & _src, ROI & r
 				}
 			}
 		}
-	ap_uint<COORDINATE_BITS> v1[MAX_CORNERS][2];
-	ap_uint<COORDINATE_BITS> v2[MAX_CORNERS][2];
-	ap_uint<COORDINATE_BITS> v3[MAX_CORNERS][2];
-	ap_uint<COORDINATE_BITS> v4[MAX_CORNERS][2];
-	ap_uint<COORDINATE_BITS> vError[MAX_CORNERS][2];
-	short int c1 = 0;
-	short int c2 = 0;
-	short int c3 = 0;
-	short int c4= 0;
-	short int cError = 0;
+	bool v1 = false;
+	bool v2 = false;
+	bool v3 = false;
+	bool v4 = false;
+	bool borderError = false;
 
 	for(int i = 0; i < cornersCount; i++){
 
 		if ((absolute_distance(minX, corners[i][0]) < HANDICAP_CORNER) && (absolute_distance(minY, corners[i][1]) < HANDICAP_CORNER)){
-			v1[c1][0] = corners[i][0];
-			v1[c1][1] = corners[i][1];
-			c1++;
+			v1 = true;
 		}
 		else if ((absolute_distance(maxX, corners[i][0]) < HANDICAP_CORNER) && (absolute_distance(minY, corners[i][1]) < HANDICAP_CORNER)){
-			v2[c2][0] = corners[i][0];
-			v2[c2][1] = corners[i][1];
-			c2++;
+			v2 = true;
 		}
-
 		else if ((absolute_distance(minX, corners[i][0]) < HANDICAP_CORNER) && (absolute_distance(maxY, corners[i][1]) < HANDICAP_CORNER)){
-			v3[c3][0] = corners[i][0];
-			v3[c3][1] = corners[i][1];
-			c3++;
+			v3 = true;
 		}
 		else if ((absolute_distance(maxX, corners[i][0]) < HANDICAP_CORNER) && (absolute_distance(maxY, corners[i][1]) < HANDICAP_CORNER)){
-			v4[c4][0] = corners[i][0];
-			v4[c4][1] = corners[i][1];
-			c4++;
+			v4 = true;
 		}
 		else{
-			vError[cError][0] = corners[i][0];
-			vError[cError][1] = corners[i][1];
-			cError++;
+			//verify if anyone of the corners if out of the "No error" bounds
+			if (!((absolute_distance(minX, corners[i][0]) < HANDICAP_ERROR)
+				|| (absolute_distance(maxX, corners[i][0]) < HANDICAP_ERROR)
+				|| (absolute_distance(minY, corners[i][1]) < HANDICAP_ERROR)
+				|| (absolute_distance(maxY, corners[i][1]) < HANDICAP_ERROR)))
+				borderError = true;
 		}
 	}
 
 	//to return the coordinates of the Region Of Interest
-	roi.x1 = v1[0][0]; roi.y1 = v1[0][1];
-	roi.x2 = v2[0][0]; roi.y2 = v2[0][1];
-	roi.x3 = v3[0][0]; roi.y3 = v3[0][1];
-	roi.x4 = v4[0][0]; roi.y4 = v4[0][1];
+	roi.x1 = minX; roi.y1 = minY;
+	roi.x2 = maxX; roi.y2 = minY;
+	roi.x3 = minX; roi.y3 = maxY;
+	roi.x4 = maxX; roi.y4 = maxY;
 
 
 
-	if ((c1 == 0) || (c2 == 0) || (c3 == 0) || (c4 == 0)){
+	if ((!v1) || (!v2) || (!v3) || (!v4)){
 		//corner error
 		return CORNER_ERROR;
 	}
-
-	ap_uint<COORDINATE_BITS> vNoError[MAX_CORNERS][2];
-	ap_uint<COORDINATE_BITS> vErrorEdge[MAX_CORNERS][2];
-	short int cNoError = 0;
-	short int cErrorEdge = 0;
-
-	for(short int i = 0; i < cError; i++)
-		if ((absolute_distance(minX, vError[i][0]) < HANDICAP_ERROR)
-				|| (absolute_distance(maxX, vError[i][0]) < HANDICAP_ERROR)
-				|| (absolute_distance(minY, vError[i][1]) < HANDICAP_ERROR)
-				|| (absolute_distance(maxY, vError[i][1]) < HANDICAP_ERROR))
-		{
-			vNoError[cNoError][0] = vError[i][0];
-			vNoError[cNoError][1] = vError[i][1];
-			cNoError++;
-		}
-
-		else
-		{
-			vErrorEdge[cErrorEdge][0] = vError[i][0];
-			vErrorEdge[cErrorEdge][1] = vError[i][1];
-			cErrorEdge++;
-		}
-
-	if (cErrorEdge > 0){
-		//border error
+	else if (borderError){
 		return BORDER_ERROR;
 	}
 
-
 	//compute dimension
 
-	int s =  (v1[0][0] * v2[0][1]) - (v2[0][0] * v1[0][1]);
-		s += (v2[0][0] * v4[0][1]) - (v4[0][0] * v2[0][1]);
-		s += (v4[0][0] * v3[0][1]) - (v3[0][0] * v4[0][1]);
-		s += (v3[0][0] * v1[0][1]) - (v1[0][0] * v3[0][1]);
+	int s =  (minX * minY) - (maxX * minY);
+		s += (maxX * maxY) - (maxX * minY);
+		s += (maxX * maxY) - (minX * maxY);
+		s += (minX * minY) - (minX * maxY);
 	int dimension =  s / 2;
 
 	if ((dimension < MIN_AREA) || (dimension > MAX_AREA)){
