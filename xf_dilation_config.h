@@ -12,9 +12,9 @@
 
 #include "common_config.h"
 
-#define FILTER_SIZE 3
+#define FILTER_SIZE 5
 #define KERNEL_SHAPE XF_SHAPE_CROSS
-#define DILATE_ITERATIONS 12
+#define DILATE_ITERATIONS 3
 
 
 /*  define the input and output types  */
