@@ -3,8 +3,8 @@
 
 #include "ap_int.h"
 
-#define HEIGHT 1275
-#define WIDTH 1700
+#define HEIGHT 1080
+#define WIDTH 1920
 #define COORDINATE_BITS 11
 
 struct ROI{

@@ -12,10 +12,17 @@
 
 #include "common_config.h"
 
+/*
 #define FILTER_SIZE 5
 #define KERNEL_SHAPE XF_SHAPE_CROSS
 #define DILATE_ITERATIONS 3
+*/
 
+/* CEMVA_IMAGES */
+#define FILTER_SIZE 11
+#define KERNEL_SHAPE XF_SHAPE_ELLIPSE
+#define DILATE_ITERATIONS 10
+/**/
 
 /*  define the input and output types  */
 #if NO

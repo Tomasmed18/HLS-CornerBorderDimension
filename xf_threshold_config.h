@@ -23,10 +23,15 @@ typedef ap_uint<64>      ap_uint64_t;
 #if NO                      
 #define NPIX				XF_NPPC1
 #endif
-
+/*
 #define THRESH 91 //89 best  85 original
 #define MAXVAL 255
+*/
 
+/* CEMVA_IMAGES */
+#define THRESH 34
+#define MAXVAL 255
+/**/
 
 void threshold_accel(xf::Mat<XF_8UC1, HEIGHT, WIDTH, NPIX> &_src,xf::Mat<XF_8UC1, HEIGHT, WIDTH, NPIX> &_dst);
 
