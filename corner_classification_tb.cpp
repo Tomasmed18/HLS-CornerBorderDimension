@@ -1,18 +1,35 @@
 #include "xf_headers.h"
-#include "xf_threshold_config.h"
-#include "xf_erosion_config.h"
-#include "xf_dilation_config.h"
-#include "xf_harris_config.h"
-#include "corner_classification.h"
-#include "corner_classification_test_code.h"
+//#include "xf_threshold_config.h"
+//#include "xf_erosion_config.h"
+//#include "xf_dilation_config.h"
+//#include "xf_harris_config.h"
+//#include "corner_classification.h"
+//#include "corner_classification_test_code.h"
+#include "pixel_remapper.h"
 #include "tb_utils.h"
-
 
 
 int main(int argc, char** argv)
 {
 
+	pixel_remap_test();
+	/*
+	cv::Mat in_img;
+	in_img = cv::imread("cemva_images/blobs_1_step_5.jpg",0);
 
+	for (int i = 0; i < in_img.rows - 2; i++){
+				for (int j = 0; j < in_img.cols - 2; j++){
+						//print the location of the corner
+					if (in_img.at<float>(i,j) != 0){
+						point p = pixel_remap(i, j);
+						std::cout << "(" << j << ", " << i << ") --> " << p.x << " " << p.y << std::endl;
+					}
+
+				}
+			}
+
+ */
+	/*
 	static xf::Mat<TYPE, HEIGHT, WIDTH, XF_NPPC1> img1, img2, img3, img4, img5;
 
 	load_image("cemva_images/blobs_1.png",img1);
@@ -28,14 +45,17 @@ int main(int argc, char** argv)
 	std::cout << ".... Step 4 ....\n\n";
 	step_executer(img3, img4, 4, 4);
 	xf::imwrite("blobs_1_step_4.jpg",img4);
-/*
+
 	std::cout << ".... Step 5 ....\n\n";
-	step_executer(img4, img5, 5, 5);
+	step_executer(img1, img5, 5, 5);
 	xf::imwrite("blobs_1_step_5.jpg",img5);
+
 	/**/
+
 	//-----------------------------------------------------------------------------------------------------------------
+/*
 	ROI RoI;
-	/*
+
 	//test code
 	cv::Mat image_to_draw;
 	image_to_draw = cv::imread("Borders/border_4_resized_2.jpg", CV_LOAD_IMAGE_COLOR);

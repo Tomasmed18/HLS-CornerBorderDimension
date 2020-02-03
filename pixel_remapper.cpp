@@ -2,7 +2,7 @@
 
 #define OFFSET_Y  28
 
-const short base_curve_y[1920] = {
+const ap_uint<COORDINATE_BITS> base_curve_y[1920] = {
       -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
       0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
       0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
@@ -306,7 +306,7 @@ const float factors_y[1080] = {
       -1.0 , -1.0 , -1.0 , -1.0 , -1.025 , -1.025 , -1.025 , -1.025 , -1.025 , -1.025 ,
       -1.025 , -1.025 , -1.025 , -1.025 , -1.025 , -1.025 , -1.0 , -1.0 , -1.0 , -1.0 };
 
-const short intercept_y_offsets[ 1080 ] = {
+const float intercept_y_offsets[ 1080 ] = {
       0 , 0 , -1 , -1 , -1 , -1 , -1 , -1 , -1 , -1 ,
       -1 , -1 , -1 , -1 , -1 , -1 , -1 , -1 , -1 , -1 ,
       -1 , -1 , -1 , -1 , -2 , -2 , -2 , -2 , -2 , -2 ,
@@ -418,7 +418,7 @@ const short intercept_y_offsets[ 1080 ] = {
 
 #define OFFSET_X 51
 
-const short base_curve_x[ 1080 ] = {
+const float base_curve_x[ 1080 ] = {
       0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 ,
       1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 ,
       1 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 2 ,
@@ -722,7 +722,7 @@ const float factors_x[ 1920 ] = {
       -0.5454545454545454 , -0.5 , -0.5454545454545454 , -0.5454545454545454 , -0.5454545454545454 , -0.5454545454545454 , -0.5 , -0.5454545454545454 , -0.5 , -0.45454545454545453 ,
       -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 , -0.4090909090909091 , -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 };
 
-const short intercept_x_offsets[ 1920 ] = {
+const float intercept_x_offsets[ 1920 ] = {
       0 , -4 , -4 , -4 , -4 , -4 , -4 , -4 , -4 , -4 ,
       -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 ,
       -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 ,
@@ -918,16 +918,63 @@ const short intercept_x_offsets[ 1920 ] = {
 
 
 
-point pixel_remap(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
+point pixel_remap(int x, int y){
 	point p;
 
-	short init_x = base_curve_x[x];
+	float init_x = base_curve_x[x];
 	float mult_x = init_x * factors_x[y];
 	p.x = mult_x + OFFSET_X + intercept_x_offsets[y];
 
-	short init_y = base_curve_y[y];
+	float init_y = base_curve_y[y];
 	float mult_y = init_y * factors_y[x];
 	p.y = mult_y + OFFSET_Y + intercept_y_offsets[x];
 
 	return p;
+}
+
+
+void test_y(int x, int y, float curva_base, float factor, float ordenada_origen, float val_mult, float val_offset, int val_fin){
+	std::cout << "*************************\nREMAP Y TEST: x " << x << " y " << y << std::endl;
+
+	float init_y = base_curve_y[y];
+	std::cout << "base_curve_y ---> original " << curva_base << " actual " << init_y << std::endl;
+
+	std::cout << "factor_y ---> original " << factor << " actual " << factors_y[x] << std::endl;
+
+	std::cout << "intercept_y ---> original " << ordenada_origen << " actual " << intercept_y_offsets[x] << std::endl;
+
+	float mult_y = init_y * factors_y[x];
+	std::cout << "mult_y ---> original " << val_mult << " actual " << mult_y << std::endl;
+
+	float offset_y =  mult_y + OFFSET_Y + intercept_y_offsets[x];
+	std::cout << "offset_y ---> original " << val_offset << " actual " << offset_y << std::endl;
+
+	float fin_y =  offset_y + x;
+	std::cout << "fin_y ---> original " << val_fin << " actual " << fin_y << std::endl << std::endl;
+
+}
+
+void pixel_remap_test(){
+	// test_y(x, y, curva_base[y], factores_y[x], ordenadas_origen_y_offset[x], val_mult, val_offset, val_fin)
+
+	test_y( 756 , 628 , 34.0 , -0.5 , -39.0 , -17.0 , -28.0 , 728 );
+	test_y( 438 , 289 , 14.0 , 0.25 , -21.0 , 3.5 , 10.5 , 448 );
+	test_y( 1059 , 1603 , 16.0 , -1.0 , -52.0 , -16.0 , -40.0 , 1019 );
+	test_y( 614 , 805 , 39.0 , -0.175 , -31.0 , -6.824999999999999 , -9.825 , 604 );
+	test_y( 513 , 628 , 34.0 , 0.05 , -25.0 , 1.7000000000000002 , 4.699999999999999 , 518 );
+	test_y( 256 , 1220 , 36.0 , 0.65 , -11.0 , 23.400000000000002 , 40.400000000000006 , 296 );
+	test_y( 739 , 875 , 40.0 , -0.45 , -38.0 , -18.0 , -28.0 , 711 );
+	test_y( 45 , 9 , 0.0 , 0.975 , -2.0 , 0.0 , 26.0 , 71 );
+	test_y( 668 , 1580 , 18.0 , -0.3 , -34.0 , -5.3999999999999995 , -11.399999999999999 , 657 );
+	test_y( 677 , 1797 , 3.0 , -0.3 , -35.0 , -0.8999999999999999 , -7.899999999999999 , 669 );
+	test_y( 850 , 1911 , 0.0 , -0.7 , -43.0 , -0.0 , -15.0 , 835 );
+	test_y( 25 , 1136 , 39.0 , 1.025 , -2.0 , 39.974999999999994 , 65.975 , 91 );
+	test_y( 524 , 107 , 2.0 , 0.05 , -26.0 , 0.1 , 2.1000000000000014 , 526 );
+	test_y( 1066 , 568 , 31.0 , -1.025 , -52.0 , -31.775 , -55.775 , 1010 );
+	test_y( 861 , 1247 , 36.0 , -0.7 , -44.0 , -25.2 , -41.2 , 820 );
+	test_y( 16 , 972 , 40.0 , 1.0 , -1.0 , 40.0 , 67.0 , 83 );
+	test_y( 135 , 1455 , 26.0 , 0.875 , -6.0 , 22.75 , 44.75 , 180 );
+	test_y( 305 , 950 , 40.0 , 0.525 , -13.0 , 21.0 , 36.0 , 341 );
+	test_y( 649 , 1691 , 10.0 , -0.25 , -33.0 , -2.5 , -7.5 , 642 );
+	test_y( 618 , 692 , 36.0 , -0.175 , -31.0 , -6.3 , -9.3 , 609 );
 }
