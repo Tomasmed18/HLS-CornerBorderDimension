@@ -1,8 +1,12 @@
 #include "pixel_remapper.h"
 
+#define BASE_CURVE_TYPE ap_int<8>
+#define FACTORS_TYPE ap_fixed<23, 13>
+#define INTERCEPT_OFFSETS_TYPE ap_int<8>
+
 #define OFFSET_Y  28
 
-const ap_uint<COORDINATE_BITS> base_curve_y[1920] = {
+const BASE_CURVE_TYPE base_curve_y[1920] = {
       -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
       0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
       0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
@@ -196,7 +200,7 @@ const ap_uint<COORDINATE_BITS> base_curve_y[1920] = {
       0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
       0 , 0 , 0 , 0 , 0 , 0 , 0 , -1 , -1 , -1 };
 
-const float factors_y[1080] = {
+const FACTORS_TYPE factors_y[1080] = {
       1.0 , 1.0 , 1.025 , 1.025 , 1.025 , 1.025 , 1.025 , 1.025 , 1.025 , 1.025 ,
       1.025 , 1.025 , 1.025 , 1.025 , 1.025 , 1.0 , 1.0 , 1.0 , 1.0 , 1.0 ,
       1.0 , 1.0 , 1.0 , 1.0 , 1.025 , 1.025 , 1.025 , 1.025 , 1.025 , 1.0 ,
@@ -306,7 +310,7 @@ const float factors_y[1080] = {
       -1.0 , -1.0 , -1.0 , -1.0 , -1.025 , -1.025 , -1.025 , -1.025 , -1.025 , -1.025 ,
       -1.025 , -1.025 , -1.025 , -1.025 , -1.025 , -1.025 , -1.0 , -1.0 , -1.0 , -1.0 };
 
-const float intercept_y_offsets[ 1080 ] = {
+const INTERCEPT_OFFSETS_TYPE intercept_y_offsets[ 1080 ] = {
       0 , 0 , -1 , -1 , -1 , -1 , -1 , -1 , -1 , -1 ,
       -1 , -1 , -1 , -1 , -1 , -1 , -1 , -1 , -1 , -1 ,
       -1 , -1 , -1 , -1 , -2 , -2 , -2 , -2 , -2 , -2 ,
@@ -418,7 +422,7 @@ const float intercept_y_offsets[ 1080 ] = {
 
 #define OFFSET_X 51
 
-const float base_curve_x[ 1080 ] = {
+const BASE_CURVE_TYPE base_curve_x[ 1080 ] = {
       0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 1 ,
       1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 ,
       1 , 1 , 2 , 2 , 2 , 2 , 2 , 2 , 2 , 2 ,
@@ -528,7 +532,7 @@ const float base_curve_x[ 1080 ] = {
       1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 ,
       1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 };
 
-const float factors_x[ 1920 ] = {
+const FACTORS_TYPE factors_x[ 1920 ] = {
       1.0 , 0.5 , 0.5 , 0.5 , 0.5 , 0.5 , 0.5 , 0.5 , 0.5 , 0.5 ,
       0.5454545454545454 , 0.5909090909090909 , 0.5909090909090909 , 0.5909090909090909 , 0.5909090909090909 , 0.5909090909090909 , 0.5909090909090909 , 0.5909090909090909 , 0.5909090909090909 , 0.5909090909090909 ,
       0.5909090909090909 , 0.5909090909090909 , 0.5909090909090909 , 0.6363636363636364 , 0.6363636363636364 , 0.6363636363636364 , 0.6363636363636364 , 0.6363636363636364 , 0.6363636363636364 , 0.6363636363636364 ,
@@ -722,7 +726,7 @@ const float factors_x[ 1920 ] = {
       -0.5454545454545454 , -0.5 , -0.5454545454545454 , -0.5454545454545454 , -0.5454545454545454 , -0.5454545454545454 , -0.5 , -0.5454545454545454 , -0.5 , -0.45454545454545453 ,
       -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 , -0.4090909090909091 , -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 , -0.45454545454545453 };
 
-const float intercept_x_offsets[ 1920 ] = {
+const INTERCEPT_OFFSETS_TYPE intercept_x_offsets[ 1920 ] = {
       0 , -4 , -4 , -4 , -4 , -4 , -4 , -4 , -4 , -4 ,
       -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 ,
       -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 , -5 ,
@@ -921,12 +925,12 @@ const float intercept_x_offsets[ 1920 ] = {
 point pixel_remap(int x, int y){
 	point p;
 
-	float init_x = base_curve_x[x];
-	float mult_x = init_x * factors_x[y];
+	BASE_CURVE_TYPE init_x = base_curve_x[x];
+	FACTORS_TYPE mult_x = init_x * factors_x[y];
 	p.x = mult_x + OFFSET_X + intercept_x_offsets[y];
 
-	float init_y = base_curve_y[y];
-	float mult_y = init_y * factors_y[x];
+	BASE_CURVE_TYPE init_y = base_curve_y[y];
+	FACTORS_TYPE mult_y = init_y * factors_y[x];
 	p.y = mult_y + OFFSET_Y + intercept_y_offsets[x];
 
 	return p;
@@ -936,20 +940,20 @@ point pixel_remap(int x, int y){
 void test_y(int x, int y, float curva_base, float factor, float ordenada_origen, float val_mult, float val_offset, int val_fin){
 	std::cout << "*************************\nREMAP Y TEST: x " << x << " y " << y << std::endl;
 
-	float init_y = base_curve_y[y];
+	BASE_CURVE_TYPE init_y = base_curve_y[y];
 	std::cout << "base_curve_y ---> original " << curva_base << " actual " << init_y << std::endl;
 
 	std::cout << "factor_y ---> original " << factor << " actual " << factors_y[x] << std::endl;
 
 	std::cout << "intercept_y ---> original " << ordenada_origen << " actual " << intercept_y_offsets[x] << std::endl;
 
-	float mult_y = init_y * factors_y[x];
+	FACTORS_TYPE mult_y = init_y * factors_y[x];
 	std::cout << "mult_y ---> original " << val_mult << " actual " << mult_y << std::endl;
 
-	float offset_y =  mult_y + OFFSET_Y + intercept_y_offsets[x];
+	FACTORS_TYPE offset_y =  mult_y + OFFSET_Y + intercept_y_offsets[x];
 	std::cout << "offset_y ---> original " << val_offset << " actual " << offset_y << std::endl;
 
-	float fin_y =  offset_y + x;
+	FACTORS_TYPE fin_y =  offset_y + x;
 	std::cout << "fin_y ---> original " << val_fin << " actual " << fin_y << std::endl << std::endl;
 
 }
