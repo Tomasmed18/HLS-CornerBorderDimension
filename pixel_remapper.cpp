@@ -1,4 +1,5 @@
 #include "pixel_remapper.h"
+#include "hls_math.h" //round() function
 
 #define BASE_CURVE_TYPE ap_int<8>
 #define FACTORS_TYPE ap_fixed<23, 13>
@@ -922,21 +923,23 @@ const INTERCEPT_OFFSETS_TYPE intercept_x_offsets[ 1920 ] = {
 
 
 
-point pixel_remap(int x, int y){
+point pixel_remap(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 	point p;
 
 	BASE_CURVE_TYPE init_x = base_curve_x[x];
 	FACTORS_TYPE mult_x = init_x * factors_x[y];
-	p.x = mult_x + OFFSET_X + intercept_x_offsets[y];
+	p.x = round((float)mult_x + OFFSET_X + intercept_x_offsets[y]) + y;
 
 	BASE_CURVE_TYPE init_y = base_curve_y[y];
 	FACTORS_TYPE mult_y = init_y * factors_y[x];
-	p.y = mult_y + OFFSET_Y + intercept_y_offsets[x];
+	p.y = round((float)mult_y + OFFSET_Y + intercept_y_offsets[x]) + x;
 
 	return p;
 }
 
+ /*********************************************** TESTS ***********************************************/
 
+/**
 void test_y(int x, int y, float curva_base, float factor, float ordenada_origen, float val_mult, float val_offset, int val_fin){
 	std::cout << "*************************\nREMAP Y TEST: x " << x << " y " << y << std::endl;
 
@@ -982,3 +985,4 @@ void pixel_remap_test(){
 	test_y( 649 , 1691 , 10.0 , -0.25 , -33.0 , -2.5 , -7.5 , 642 );
 	test_y( 618 , 692 , 36.0 , -0.175 , -31.0 , -6.3 , -9.3 , 609 );
 }
+*/
