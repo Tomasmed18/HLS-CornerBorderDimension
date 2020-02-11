@@ -1,4 +1,5 @@
 #include "corner_classification.h"
+#include "pixel_remapper.h"
 
 int absolute_distance(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 	if (x > y)
@@ -19,11 +20,15 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, XF_NPPC1> & _src, ROI & r
 
 	for(short int j = 0; j < _src.rows ; j++ ){
 			for(short int i = 0; i < (_src.cols>>XF_BITSHIFT(XF_NPPC1)); i++ ){
+				//get the pixel brightness value
 				unsigned char pix = _src.data[j*(_src.cols>>XF_BITSHIFT(XF_NPPC1))+i];
 
+				//remap the coordinates, deleting radial lens distortion
+				point remapped_intercept = pixel_remap(j, i);
+
 				short int y, x;
-				y = j;
-				x = i;
+				y = remapped_intercept.y;
+				x = remapped_intercept.x;
 
 
 				if ((j > 0) && ((int)pix > 200)){

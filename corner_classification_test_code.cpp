@@ -1,4 +1,5 @@
 #include "corner_classification_test_code.h"
+#include "pixel_remapper.h"
 
 int distance_testing(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 	if (x > y)
@@ -23,10 +24,15 @@ ROI corner_classification_testing(xf::Mat<XF_8UC1, HEIGHT, WIDTH, XF_NPPC1> & _s
 					for( short int i = 0; i < (_src.cols>>XF_BITSHIFT(XF_NPPC1)); i++ ){
 							unsigned char pix = _src.data[j*(_src.cols>>XF_BITSHIFT(XF_NPPC1))+i];
 
-								short int y, x;
-								y = j;
-								x = i;
+							point remapped_intercept = pixel_remap(j, i);
 
+							short int y, x;
+							y = remapped_intercept.y;
+							x = remapped_intercept.x;
+
+							if ((int)pix > 200){
+								std::cout << "(" << i << ", " << j << ") ---> ("<< x << ", " << y << ")\n";
+							}
 
 								if ((j > 0) && ((int)pix > 200)
 //										&& (x > 400) && (y > 200) //For testing purposes only
@@ -171,9 +177,9 @@ ROI corner_classification_testing(xf::Mat<XF_8UC1, HEIGHT, WIDTH, XF_NPPC1> & _s
 
 			//print edge error results
 			cv::Mat out_img_3;
-			out_img_3 = cv::imread("Borders/border_4_resized_2.jpg", CV_LOAD_IMAGE_COLOR);
+			out_img_3 = cv::imread("cemva_images/remapped.png", CV_LOAD_IMAGE_COLOR);
 			cv::Mat out_img_4;
-			out_img_4 = cv::imread("Borders/border_4_resized_2.jpg", CV_LOAD_IMAGE_COLOR);
+			out_img_4 = cv::imread("cemva_images/remapped.png", CV_LOAD_IMAGE_COLOR);
 			std::cout << "\n ************** \nvNoerror points: \n";
 			for (int i = 0; i < cNoError; i++){
 				std::cout << "x: " << vNoError[i][0] << "  y: " << vNoError[i][1] << "\n";

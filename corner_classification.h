@@ -12,7 +12,7 @@
 #define NPC1 8
 
 #define COORDINATE_BITS 11
-#define MAX_CORNERS 400
+#define MAX_CORNERS 800
 
 #define MAX_VAL 2047
 

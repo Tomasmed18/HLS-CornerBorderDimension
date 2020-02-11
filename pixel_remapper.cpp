@@ -1,9 +1,9 @@
 #include "pixel_remapper.h"
 #include "hls_math.h" //round() function
 
-#define BASE_CURVE_TYPE ap_int<8>
-#define FACTORS_TYPE ap_fixed<23, 13>
-#define INTERCEPT_OFFSETS_TYPE ap_int<8>
+#define BASE_CURVE_TYPE ap_int<14>
+#define FACTORS_TYPE ap_fixed<32, 18>
+#define INTERCEPT_OFFSETS_TYPE ap_int<14>
 
 #define OFFSET_Y  28
 
@@ -928,11 +928,19 @@ point pixel_remap(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 
 	BASE_CURVE_TYPE init_x = base_curve_x[x];
 	FACTORS_TYPE mult_x = init_x * factors_x[y];
-	p.x = round((float)mult_x + OFFSET_X + intercept_x_offsets[y]) + y;
+	int rx = round((float)mult_x + OFFSET_X + intercept_x_offsets[y]) + y;
 
 	BASE_CURVE_TYPE init_y = base_curve_y[y];
 	FACTORS_TYPE mult_y = init_y * factors_y[x];
-	p.y = round((float)mult_y + OFFSET_Y + intercept_y_offsets[x]) + x;
+	int ry = round((float)mult_y + OFFSET_Y + intercept_y_offsets[x]) + x;
+
+	if ((ry > 1080)||(rx > 1920)){
+		ry = 1080;
+		rx = 1920;
+	}
+
+	p.x = rx;
+	p.y = ry;
 
 	return p;
 }
