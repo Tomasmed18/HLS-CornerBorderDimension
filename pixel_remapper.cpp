@@ -1,9 +1,9 @@
 #include "pixel_remapper.h"
 #include "hls_math.h" //round() function
 
-#define BASE_CURVE_TYPE ap_int<14>
-#define FACTORS_TYPE ap_fixed<32, 18>
-#define INTERCEPT_OFFSETS_TYPE ap_int<14>
+#define BASE_CURVE_TYPE ap_int<10>
+#define FACTORS_TYPE ap_fixed<20, 12>
+#define INTERCEPT_OFFSETS_TYPE ap_int<10>
 
 #define OFFSET_Y  28
 

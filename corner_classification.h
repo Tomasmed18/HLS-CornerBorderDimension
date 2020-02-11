@@ -21,11 +21,11 @@
 
 //handicaps
 #define HANDICAP_CORNER 20
-#define HANDICAP_ERROR 5
+#define HANDICAP_ERROR 20
 
 //dimension verification
-#define MIN_AREA 600000
-#define MAX_AREA 700000
+#define MIN_AREA 800000
+#define MAX_AREA 900000
 
 
 //result codes

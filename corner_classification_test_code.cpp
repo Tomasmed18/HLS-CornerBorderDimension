@@ -53,7 +53,7 @@ ROI corner_classification_testing(xf::Mat<XF_8UC1, HEIGHT, WIDTH, XF_NPPC1> & _s
 									if ((maxY == MAX_VAL) || (maxY < y))
 										maxY = y;
 
-									cv::circle(_image_to_draw, cv::Point(x, y), 20,  cv::Scalar(255,255,255), 6, 8, 0 );
+									cv::circle(_image_to_draw, cv::Point(x, y), 8,  cv::Scalar(255,255,255), 6, 8, 0 );
 								}
 
 
