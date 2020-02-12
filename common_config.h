@@ -1,8 +1,7 @@
 #ifndef _COMMON_CONFIG_
 #define _COMMON_CONFIG_
 
-#include "ap_int.h" //custom xilinx integer types
-#include "ap_fixed.h" //custom xilinx fixed point types
+#include "xf_headers.h"
 
 #define HEIGHT 1080
 #define WIDTH 1920

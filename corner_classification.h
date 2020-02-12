@@ -2,11 +2,7 @@
 #define CORNER_CLASSIFICATION_H_
 
 #include "common_config.h"
-#include "ap_int.h"
-#include "common/xf_params.h"
-#include "common/xf_types.h"
-#include "common/xf_common.h"
-#include "common/xf_utility.h"
+#include "xf_headers.h"
 
 #define TYPE XF_8UC1
 #define NPC1 8

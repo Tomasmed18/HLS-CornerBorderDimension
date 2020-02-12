@@ -1,7 +1,7 @@
-//#include "xf_remap_config.h"
+#include "xf_ip_accel_app_config.h"
 
 //void remap_accel(xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_src,xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_dst);
-/*
+
 void ip_accel_app(hls::stream< ap_axiu<8,1,1,1> >& _src,hls::stream< ap_axiu<8,1,1,1> >& _dst)
 {
 #pragma HLS INTERFACE axis register both  port=_src
@@ -12,16 +12,16 @@ void ip_accel_app(hls::stream< ap_axiu<8,1,1,1> >& _src,hls::stream< ap_axiu<8,1
 	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput2(HEIGHT, WIDTH);
 
 
-#pragma HLS stream variable=imgInput1.data dim=1 depth=1
+//#pragma HLS stream variable=imgInput1.data dim=1 depth=1
 #pragma HLS stream variable=imgOutput1.data dim=1 depth=1
 #pragma HLS stream variable=imgOutput2.data dim=1 depth=1
 	#pragma HLS dataflow
 
 
 	xf::AXIvideo2xfMat(_src, imgOutput1);
-	//remap_accel(imgOutput1,imgOutput2);
-	xf::xfMat2AXIvideo(imgOutput2, _dst);
+	//CBD(imgOutput1,imgOutput2);
+	xf::xfMat2AXIvideo(imgOutput1, _dst);
 
 
 }
-*/
+

@@ -34,8 +34,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "ap_int.h"
+#include "ap_int.h" //custom xilinx integer types
+#include "ap_fixed.h" //custom xilinx fixed point types
 #include "hls_stream.h"
+#include "common/xf_axi.h"
+#include "common/xf_params.h"
+#include "common/xf_types.h"
+#include "common/xf_common.h"
+#include "common/xf_utility.h"
+#include "common/xf_infra.h"
+#include "common/xf_sw_utils.h"
 
 #if __SDSCC__
 #undef __ARM_NEON__
@@ -59,7 +67,7 @@
 #define TIME_STAMP  { clock_end = sds_clock_counter(); printf("elapsed time %lu \n", clock_end-clock_start); clock_start = sds_clock_counter();  }
 #endif
 
-#include "common/xf_sw_utils.h"
+
 
 
 #endif//_XF_HEADERS_H_
