@@ -31,19 +31,11 @@
 #define _XF_HEADERS_H_
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include "ap_int.h" //custom xilinx integer types
-#include "ap_fixed.h" //custom xilinx fixed point types
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <stdint.h>
+#include "ap_int.h"
 #include "hls_stream.h"
-#include "common/xf_axi.h"
-#include "common/xf_params.h"
-#include "common/xf_types.h"
-#include "common/xf_common.h"
-#include "common/xf_utility.h"
-#include "common/xf_infra.h"
-#include "common/xf_sw_utils.h"
 
 #if __SDSCC__
 #undef __ARM_NEON__
@@ -68,6 +60,19 @@
 #endif
 
 
+#include "common/xf_axi.h"
+
+#define COORDINATE_BITS 11
+struct ROI{
+	ap_uint<COORDINATE_BITS> x1;
+	ap_uint<COORDINATE_BITS> y1;
+	ap_uint<COORDINATE_BITS> x2;
+	ap_uint<COORDINATE_BITS> y2;
+	ap_uint<COORDINATE_BITS> x3;
+	ap_uint<COORDINATE_BITS> y3;
+	ap_uint<COORDINATE_BITS> x4;
+	ap_uint<COORDINATE_BITS> y4;
+};
 
 
 #endif//_XF_HEADERS_H_

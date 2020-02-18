@@ -1,4 +1,5 @@
 /CBD/*
+/remap_xf_hls/*
 description.json
 Makefile
 vivado_hls.log

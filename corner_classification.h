@@ -1,10 +1,12 @@
 #ifndef CORNER_CLASSIFICATION_H_
 #define CORNER_CLASSIFICATION_H_
 
-#include "common_config.h"
-#include "xf_headers.h"
+#include "common/xf_structs.h" //for xf::Mat class
 
-#define TYPE XF_8UC1
+#include "xf_headers.h"
+#include "xf_config_params.h"
+
+#define TYPE 0 //XF_8UC1
 #define NPC1 8
 
 #define COORDINATE_BITS 11
@@ -12,7 +14,7 @@
 
 #define MAX_VAL 2047
 
-#define NPIX XF_NPPC8
+#define NPIX 1 //XF_NPPC1
 
 
 //handicaps
@@ -31,6 +33,6 @@
 #define DIMENSION_ERROR 3
 
 
-int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, XF_NPPC1> &_src, ROI & roi);
+int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX> &_src, ROI & roi);
 
 #endif /* CORNER_CLASSIFICATION_H_ */

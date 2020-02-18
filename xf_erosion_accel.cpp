@@ -1,10 +1,18 @@
-
-
 #include "xf_erosion_config.h"
 
-void erosion_accel(xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_src,xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_dst, unsigned char kernel[FILTER_SIZE*FILTER_SIZE])
+unsigned char erode_kernel[ERODE_FILTER_SIZE*ERODE_FILTER_SIZE] ={0,0,0,1,0,0,0,
+												0,0,0,1,0,0,0,
+												0,0,0,1,0,0,0,
+												1,1,1,1,1,1,1,
+												0,0,0,1,0,0,0,
+												0,0,0,1,0,0,0,
+												0,0,0,1,0,0,0};
+
+
+
+void erosion_accel(xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_src,xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_dst)
 {
 
-	xf::erode<XF_BORDER_REPLICATE, TYPE ,HEIGHT, WIDTH, KERNEL_SHAPE, FILTER_SIZE, FILTER_SIZE, ERODE_ITERATIONS, NPC1>(_src, _dst,kernel);
+	xf::erode<XF_BORDER_CONSTANT, TYPE ,HEIGHT, WIDTH, ERODE_KERNEL_SHAPE, ERODE_FILTER_SIZE, ERODE_FILTER_SIZE, ERODE_ITERATIONS, NPC1>(_src, _dst,erode_kernel);
 
 }

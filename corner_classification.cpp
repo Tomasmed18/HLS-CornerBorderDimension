@@ -8,7 +8,7 @@ int absolute_distance(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 		return y - x;
 }
 
-int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, XF_NPPC1> & _src, ROI & roi)
+int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX> & _src, ROI & roi)
 {
 	ap_uint<COORDINATE_BITS> corners[MAX_CORNERS][2];
 	short int cornersCount = 0;

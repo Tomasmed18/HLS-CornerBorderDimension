@@ -1,4 +1,7 @@
-#include "common_config.h"
+//#include "xf_config_params.h"
+#include "ap_int.h"
+
+#define COORDINATE_BITS 11
 
 struct point{
 	ap_uint<COORDINATE_BITS> x;

@@ -27,59 +27,25 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***************************************************************************/
-#define FILTER_SIZE 11
 
-#define KERNEL_SHAPE XF_SHAPE_ELLIPSE
+#ifndef _XF_IP_ACCEL_CONFIG_H_
+#define _XF_IP_ACCEL_CONFIG_H_
 
-#include "xf_headers.h"
-#include "xf_ip_accel_config.h"
-
-int main(int argc, char** argv)
-{
-
-	if(argc != 2)
-	{
-		fprintf(stderr,"Invalid Number of Arguments!\nUsage:\n");
-		fprintf(stderr,"<Executable Name> <input image path> \n");
-		return -1;
-	}
-
-	cv::Mat in_img;
-	cv::Mat out_img;
-
-	// reading in the color image
-	in_img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
-	if (in_img.data == NULL)
-	{
-		fprintf(stderr,"Cannot open image at %s\n", argv[1]);
-		return 0;
-	}
-	out_img.create(HEIGHT, WIDTH,CV_8UC1);
-
-	uint16_t height = in_img.rows;
-	uint16_t width = in_img.cols;
+#include "hls_stream.h"
+#include "ap_int.h"
+#include "common/xf_common.h"
+#include "common/xf_utility.h"
+#include "common/xf_infra.h"
+#include "imgproc/xf_remap.hpp"
+#include "imgproc/xf_resize.hpp"
+#include "xf_config_params.h"
 
 
-	hls::stream< ap_axiu<8,1,1,1> > _src,_dst;
 
-	#if __SDSCC__
-	perf_counter hw_ctr;
-	hw_ctr.start();
-	#endif
+/*  define the input and output types  */
+#define NPC1 1 //XF_NPPC1
+#define TYPE XF_8UC1
 
-	cvMat2AXIvideoxf<NPC1>(in_img, _src);
 
-	ip_accel_app(_src, _dst);
-
-	AXIvideo2cvMatxf<NPC1>(_dst, out_img);
-
-	#if __SDSCC__
-	hw_ctr.stop();
-	uint64_t hw_cycles = hw_ctr.avg_cpu_cycles();
-	#endif
-
-	cv::imwrite("hls_out.png", out_img);
-
-	return 0;
-
-}
+void ip_accel_app(hls::stream< ap_axiu<8,1,1,1> >& _src,hls::stream< ap_axiu<8,1,1,1> >& _dst);
+#endif // _XF_IP_ACCEL_CONFIG_H_
