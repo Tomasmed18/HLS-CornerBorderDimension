@@ -7,16 +7,16 @@
 #include "xf_harris_config.h"
 #include "corner_classification.h"
 
-void ip_accel_app(hls::stream< ap_axiu<8,1,1,1> >& _src,hls::stream< ap_axiu<8,1,1,1> >& _dst)
+void cbd_accel(hls::stream< ap_axiu<8,1,1,1> >& _src,hls::stream< ap_axiu<8,1,1,1> >& _dst)
 {
 #pragma HLS INTERFACE axis register both  port=_src
 #pragma HLS INTERFACE axis register both  port=_dst
 
-	 xf::Mat<TYPE, HEIGHT, WIDTH, 1> imgOutput1(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, 1> imgOutput2(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, 1> imgOutput3(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, 1> imgOutput4(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, 1> imgOutput5(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput1(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput2(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput3(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput4(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput5(HEIGHT, WIDTH);
 
 	 ROI roi;
 

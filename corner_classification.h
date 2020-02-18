@@ -7,7 +7,7 @@
 #include "xf_config_params.h"
 
 #define TYPE 0 //XF_8UC1
-#define NPC1 8
+//#define NPC1 8
 
 #define COORDINATE_BITS 11
 #define MAX_CORNERS 800
