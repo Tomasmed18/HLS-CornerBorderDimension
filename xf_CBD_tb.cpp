@@ -27,11 +27,9 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ***************************************************************************/
-#define FILTER_SIZE 11
-
-#define KERNEL_SHAPE XF_SHAPE_ELLIPSE
 
 #include "xf_headers.h"
+#include "tb_headers.h"
 #include "xf_ip_accel_config.h"
 
 int main(int argc, char** argv)
@@ -67,11 +65,11 @@ int main(int argc, char** argv)
 	hw_ctr.start();
 	#endif
 
-	cvMat2AXIvideoxf<NPC1>(in_img, _src);
+	cvMat2AXIvideoxf<NPIX>(in_img, _src);
 
 	cbd_accel(_src, _dst);
 
-	AXIvideo2cvMatxf<NPC1>(_dst, out_img);
+	AXIvideo2cvMatxf<NPIX>(_dst, out_img);
 
 	#if __SDSCC__
 	hw_ctr.stop();

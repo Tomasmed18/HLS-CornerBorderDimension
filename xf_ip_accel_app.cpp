@@ -12,11 +12,11 @@ void cbd_accel(hls::stream< ap_axiu<8,1,1,1> >& _src,hls::stream< ap_axiu<8,1,1,
 #pragma HLS INTERFACE axis register both  port=_src
 #pragma HLS INTERFACE axis register both  port=_dst
 
-	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput1(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput2(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput3(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput4(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> imgOutput5(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput1(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput2(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput3(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput4(HEIGHT, WIDTH);
+	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput5(HEIGHT, WIDTH);
 
 	 ROI roi;
 
