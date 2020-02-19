@@ -6,4 +6,4 @@
 
 #define COORDINATE_BITS 11
 
-
+#define NPIX XF_NPPC1

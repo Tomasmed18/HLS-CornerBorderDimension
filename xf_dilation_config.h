@@ -19,12 +19,12 @@
 /**/
 
 /*  define the input and output types  */
-#define NPC1 XF_NPPC1
+#define NPIX_DILATE NPIX
 
 
 #define TYPE XF_8UC1
 
-void dilation_accel(xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_src,xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_dst);
+void dilation_accel(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_DILATE> &_src,xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_DILATE> &_dst);
 #endif // _XF_DILATION_CONFIG_H_
 
 

@@ -13,7 +13,7 @@ typedef ap_uint<64>      ap_uint64_t;
 
 
 
-#define NPIX				XF_NPPC1
+#define NPIX_THRESHOLD				NPIX
 /*
 #define THRESH 91 //89 best  85 original
 #define MAXVAL 255

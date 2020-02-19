@@ -43,7 +43,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 /*  define the input and output types  */
-#define NPC1 1 //XF_NPPC1
+#define NPIX_CDB NPIX //XF_NPPC1
 #define TYPE XF_8UC1
 
 

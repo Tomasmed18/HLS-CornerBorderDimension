@@ -11,7 +11,7 @@
  * Pack pixels in and write into streams
  */
 
-#define NPIX				XF_NPPC1
+#define NPIX_HARRIS				NPIX
 
 
 #define IMGSIZE				WIDTH*HEIGHT

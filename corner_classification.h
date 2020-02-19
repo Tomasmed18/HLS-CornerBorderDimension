@@ -14,7 +14,7 @@
 
 #define MAX_VAL 2047
 
-#define NPIX 1 //XF_NPPC1
+#define NPIX_CORNER_CLASSIFICATION NPIX //XF_NPPC1
 
 
 //handicaps
@@ -33,6 +33,6 @@
 #define DIMENSION_ERROR 3
 
 
-int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX> &_src, ROI & roi);
+int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> &_src, ROI & roi);
 
 #endif /* CORNER_CLASSIFICATION_H_ */

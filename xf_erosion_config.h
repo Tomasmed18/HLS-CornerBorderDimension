@@ -19,12 +19,12 @@
 /**/
 
 /*  define the input and output types  */
-#define NPC1 XF_NPPC1
+#define NPIX_ERODE NPIX
 
 
 #define TYPE XF_8UC1
 
-void erosion_accel(xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_src,xf::Mat<TYPE, HEIGHT, WIDTH, NPC1> &_dst);
+void erosion_accel(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_ERODE> &_src,xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_ERODE> &_dst);
 #endif // _XF_EROSION_CONFIG_H_
 
 
