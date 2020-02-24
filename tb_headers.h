@@ -27,5 +27,6 @@
 #include "common/xf_axi.h"
 #include "common/xf_common.h"
 #include "common/xf_utility.h"
+#include "hls_stream.h"
 
 #endif //_TB_HEADERS_H_
