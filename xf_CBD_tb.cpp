@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 	cv::Mat out_img;
 
 	// reading in the color image
-	in_img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
+	in_img = cv::imread(argv[1], cv::IMREAD_COLOR);
 	if (in_img.data == NULL)
 	{
 		fprintf(stderr,"Cannot open image at %s\n", argv[1]);
@@ -57,8 +57,8 @@ int main(int argc, char** argv)
 	uint16_t height = in_img.rows;
 	uint16_t width = in_img.cols;
 
-
-	hls::stream< ap_axiu<8,1,1,1> > _src,_dst;
+	hls::stream< ap_axiu<24,1,1,1> > _src;
+	hls::stream< ap_axiu<8,1,1,1> > _dst;
 
 	#if __SDSCC__
 	perf_counter hw_ctr;
