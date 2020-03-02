@@ -8,7 +8,7 @@
 #include "imgproc/xf_cvt_color.hpp"
 #include "corner_classification.h"
 
-void cbd_accel(hls::stream< ap_axiu<24,1,1,1> >& _src,hls::stream< ap_axiu<8,1,1,1> >& _dst)
+void cbd_accel(hls::stream< ap_axiu<24,1,1,1> >& _src,hls::stream< ap_axiu<24,1,1,1> >& _dst)
 {
 #pragma HLS INTERFACE axis register both  port=_src
 #pragma HLS INTERFACE axis register both  port=_dst
@@ -45,8 +45,9 @@ void cbd_accel(hls::stream< ap_axiu<24,1,1,1> >& _src,hls::stream< ap_axiu<8,1,1
 	int result = corner_classification(imgOutput5, roi);
 
 
+	xf::gray2rgb<XF_8UC1, XF_8UC3, HEIGHT, WIDTH, XF_NPPC1>(imgOutput5, imgOutput6);
 
-	xf::xfMat2AXIvideo(imgOutput5, _dst);
+	xf::xfMat2AXIvideo(imgOutput6, _dst);
 
 
 }

@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 	uint16_t width = in_img.cols;
 
 	hls::stream< ap_axiu<24,1,1,1> > _src;
-	hls::stream< ap_axiu<8,1,1,1> > _dst;
+	hls::stream< ap_axiu<24,1,1,1> > _dst;
 
 	#if __SDSCC__
 	perf_counter hw_ctr;
