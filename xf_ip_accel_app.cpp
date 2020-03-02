@@ -38,13 +38,13 @@ void cbd_accel(hls::stream< ap_axiu<24,1,1,1> >& _src,hls::stream< ap_axiu<8,1,1
 
 	//RGB to YUV conversion, to obtain the grayscale image
 	xf::rgb2yuv4<XF_8UC3,XF_8UC1, HEIGHT, WIDTH, XF_NPPC1>(imgOutput0,imgOutput1,img_u,img_v);
-//	threshold_accel(imgOutput1, imgOutput2);
-//	erosion_accel(imgOutput2, imgOutput3);
-//	dilation_accel(imgOutput3, imgOutput4);
-//	harris_accel(imgOutput4, imgOutput5);
-//	int result = corner_classification(imgOutput5, roi);
+	threshold_accel(imgOutput1, imgOutput2);
+	erosion_accel(imgOutput2, imgOutput3);
+	dilation_accel(imgOutput3, imgOutput4);
+	harris_accel(imgOutput4, imgOutput5);
+	int result = corner_classification(imgOutput5, roi);
 
-	xf::xfMat2AXIvideo(imgOutput1, _dst);
+	xf::xfMat2AXIvideo(imgOutput5, _dst);
 
 
 }
