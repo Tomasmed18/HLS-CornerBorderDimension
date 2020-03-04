@@ -1,6 +1,7 @@
 #include "corner_classification.h"
 #include "pixel_remapper.h"
 
+
 int absolute_distance(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 	if (x > y)
 		return x - y;
@@ -8,7 +9,37 @@ int absolute_distance(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 		return y - x;
 }
 
-int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & _src, ROI & roi)
+void draw_corners(xf::Mat<XF_8UC3, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & img,
+		short int x1, short int y1, short int x2, short int y2,
+		short int x3, short int y3, short int x4, short int y4){
+
+	img.data[(y1-1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x1] = CORNER_COLOR;
+	img.data[y1*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x1-1)] = CORNER_COLOR;
+	img.data[y1*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x1] = CORNER_COLOR;
+	img.data[y1*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x1+1)] = CORNER_COLOR;
+	img.data[(y1+1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x1] = CORNER_COLOR;
+
+	img.data[(y2-1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x2] = CORNER_COLOR;
+	img.data[y2*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x2-1)] = CORNER_COLOR;
+	img.data[y2*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x2] = CORNER_COLOR;
+	img.data[y2*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x2+1)] = CORNER_COLOR;
+	img.data[(y2+1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x2] = CORNER_COLOR;
+
+	img.data[(y3-1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x3] = CORNER_COLOR;
+	img.data[y3*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x3-1)] = CORNER_COLOR;
+	img.data[y3*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x3] = CORNER_COLOR;
+	img.data[y3*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x3+1)] = CORNER_COLOR;
+	img.data[(y3+1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x3] = CORNER_COLOR;
+
+	img.data[(y4-1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x4] = CORNER_COLOR;
+	img.data[y4*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x4-1)] = CORNER_COLOR;
+	img.data[y4*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x4] = CORNER_COLOR;
+	img.data[y4*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x4+1)] = CORNER_COLOR;
+	img.data[(y4+1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x4] = CORNER_COLOR;
+}
+
+int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & _src,
+						  xf::Mat<XF_8UC3, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & _dst, ROI & roi)
 {
 	ap_uint<COORDINATE_BITS> corners[MAX_CORNERS][2];
 	short int cornersCount = 0;
@@ -18,8 +49,8 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATIO
 	ap_uint<COORDINATE_BITS> minY = MAX_VAL;
 	ap_uint<COORDINATE_BITS> maxY = MAX_VAL;
 
-	for(short int j = 0; j < _src.rows ; j++ ){
-			for(short int i = 0; i < (_src.cols>>XF_BITSHIFT(XF_NPPC1)); i++ ){
+	for(short int j = 1; j < (_src.rows - 1); j++ ){
+			for(short int i = 1; i < ((_src.cols>>XF_BITSHIFT(XF_NPPC1)) - 1); i++ ){
 				//get the pixel brightness value
 				unsigned char pix = _src.data[j*(_src.cols>>XF_BITSHIFT(XF_NPPC1))+i];
 
@@ -85,6 +116,9 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATIO
 	roi.x2 = maxX; roi.y2 = minY;
 	roi.x3 = minX; roi.y3 = maxY;
 	roi.x4 = maxX; roi.y4 = maxY;
+
+	//draw the supposed corner locations
+	draw_corners(_dst, minX, minY, maxX, minY, minX, maxY, maxX, maxY);
 
 
 

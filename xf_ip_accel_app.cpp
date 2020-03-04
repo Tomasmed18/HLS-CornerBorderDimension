@@ -20,8 +20,8 @@ void cbd_accel(hls::stream< ap_axiu<24,1,1,1> >& _src,hls::stream< ap_axiu<24,1,
 	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput3(HEIGHT, WIDTH);
 	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput4(HEIGHT, WIDTH);
 	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput5(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput5_1(HEIGHT, WIDTH);
-	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput5_2(HEIGHT, WIDTH);
+//	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput5_1(HEIGHT, WIDTH);
+//	 xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CDB> imgOutput5_2(HEIGHT, WIDTH);
 	 xf::Mat<XF_8UC3, HEIGHT, WIDTH, NPIX_CDB> imgOutput6(HEIGHT, WIDTH); //RGB
 
 	 ROI roi;
@@ -33,8 +33,8 @@ void cbd_accel(hls::stream< ap_axiu<24,1,1,1> >& _src,hls::stream< ap_axiu<24,1,
 #pragma HLS stream variable=imgOutput3.data dim=1 depth=1
 #pragma HLS stream variable=imgOutput4.data dim=1 depth=1
 #pragma HLS stream variable=imgOutput5.data dim=1 depth=1
-#pragma HLS stream variable=imgOutput5_1.data dim=1 depth=1
-#pragma HLS stream variable=imgOutput5_2.data dim=1 depth=1
+//#pragma HLS stream variable=imgOutput5_1.data dim=1 depth=1
+//#pragma HLS stream variable=imgOutput5_2.data dim=1 depth=1
 #pragma HLS stream variable=imgOutput6.data dim=1 depth=1
 	#pragma HLS dataflow
 
@@ -48,12 +48,12 @@ void cbd_accel(hls::stream< ap_axiu<24,1,1,1> >& _src,hls::stream< ap_axiu<24,1,
 	dilation_accel(imgOutput3, imgOutput4);
 	harris_accel(imgOutput4, imgOutput5);
 
-	xf::duplicateMat<TYPE, HEIGHT, WIDTH, NPIX_CDB>(imgOutput5, imgOutput5_1, imgOutput5_2);
+	//xf::duplicateMat<TYPE, HEIGHT, WIDTH, NPIX_CDB>(imgOutput5, imgOutput5_1, imgOutput5_2);
 
-	int result = corner_classification(imgOutput5_1, roi);
+	int result = corner_classification(imgOutput5, imgOutput6, roi);
 
 	//GRAY to RGB conversion, to produce a 24-bit image
-	xf::gray2rgb<XF_8UC1, XF_8UC3, HEIGHT, WIDTH, XF_NPPC1>(imgOutput5_2, imgOutput6);
+	//xf::gray2rgb<XF_8UC1, XF_8UC3, HEIGHT, WIDTH, XF_NPPC1>(imgOutput5_2, imgOutput6);
 
 
 	xf::xfMat2AXIvideo(imgOutput6, _dst);

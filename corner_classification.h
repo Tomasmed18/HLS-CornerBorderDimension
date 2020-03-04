@@ -10,12 +10,16 @@
 //#define NPC1 8
 
 #define COORDINATE_BITS 11
-#define MAX_CORNERS 800
+#define MAX_CORNERS 2000
 
 #define MAX_VAL 2047
 
 #define NPIX_CORNER_CLASSIFICATION NPIX //XF_NPPC1
 
+//drawing colors
+#define CORNER_COLOR 0xFF00AA
+#define CORRECT_BORDER_COLOR 0x47E541
+#define ERROR_BORDER_COLOR 0xF0FF00
 
 //handicaps
 #define HANDICAP_CORNER 20
@@ -33,6 +37,6 @@
 #define DIMENSION_ERROR 3
 
 
-int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> &_src, ROI & roi);
+int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> &_src, xf::Mat<XF_8UC3, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> &_dst, ROI & roi);
 
 #endif /* CORNER_CLASSIFICATION_H_ */
