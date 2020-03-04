@@ -33,8 +33,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "hls_stream.h"
 #include "ap_int.h"
-#include "imgproc/xf_remap.hpp"
-#include "imgproc/xf_resize.hpp"
 #include "xf_config_params.h"
 
 

@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 		fprintf(stderr,"Cannot open image at %s\n", argv[1]);
 		return 0;
 	}
-	out_img.create(HEIGHT, WIDTH,CV_8UC1);
+	out_img.create(HEIGHT, WIDTH,CV_8UC3);
 
 	uint16_t height = in_img.rows;
 	uint16_t width = in_img.cols;
