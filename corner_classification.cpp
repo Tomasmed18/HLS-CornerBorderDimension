@@ -10,32 +10,24 @@ int absolute_distance(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 }
 
 void draw_corners(xf::Mat<XF_8UC3, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & img,
-		short int x1, short int y1, short int x2, short int y2,
-		short int x3, short int y3, short int x4, short int y4){
+		short int x1, short int y1, short int x4, short int y4){
+	if (((x1-FIGURE_KERNEL_CENTER) > 0) && ((y1-FIGURE_KERNEL_CENTER) > 0) &&
+			((x4-FIGURE_KERNEL_CENTER) > 0) && ((y4-FIGURE_KERNEL_CENTER) > 0) &&
+			((x1+FIGURE_KERNEL_CENTER) < WIDTH) && ((y1+FIGURE_KERNEL_CENTER) < HEIGHT) &&
+			((x4+FIGURE_KERNEL_CENTER) < WIDTH) && ((y4+FIGURE_KERNEL_CENTER) < HEIGHT))
 
-	img.data[(y1-1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x1] = CORNER_COLOR;
-	img.data[y1*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x1-1)] = CORNER_COLOR;
-	img.data[y1*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x1] = CORNER_COLOR;
-	img.data[y1*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x1+1)] = CORNER_COLOR;
-	img.data[(y1+1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x1] = CORNER_COLOR;
+		for(int i = 0; i < FIGURE_KERNEL_DIM; i++)
 
-	img.data[(y2-1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x2] = CORNER_COLOR;
-	img.data[y2*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x2-1)] = CORNER_COLOR;
-	img.data[y2*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x2] = CORNER_COLOR;
-	img.data[y2*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x2+1)] = CORNER_COLOR;
-	img.data[(y2+1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x2] = CORNER_COLOR;
-
-	img.data[(y3-1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x3] = CORNER_COLOR;
-	img.data[y3*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x3-1)] = CORNER_COLOR;
-	img.data[y3*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x3] = CORNER_COLOR;
-	img.data[y3*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x3+1)] = CORNER_COLOR;
-	img.data[(y3+1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x3] = CORNER_COLOR;
-
-	img.data[(y4-1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x4] = CORNER_COLOR;
-	img.data[y4*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x4-1)] = CORNER_COLOR;
-	img.data[y4*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x4] = CORNER_COLOR;
-	img.data[y4*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x4+1)] = CORNER_COLOR;
-	img.data[(y4+1)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + x4] = CORNER_COLOR;
+		#pragma HLS UNROLL
+			for(int j = 0; j < FIGURE_KERNEL_DIM; j++){
+				#pragma HLS UNROLL
+							if (figure[i][j]){
+								img.data[(y1+i-FIGURE_KERNEL_CENTER)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x1+j-FIGURE_KERNEL_CENTER)] = CORNER_COLOR;
+								img.data[(y1+i-FIGURE_KERNEL_CENTER)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x4+j-FIGURE_KERNEL_CENTER)] = CORNER_COLOR;
+								img.data[(y4+i-FIGURE_KERNEL_CENTER)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x1+j-FIGURE_KERNEL_CENTER)] = CORNER_COLOR;
+								img.data[(y4+i-FIGURE_KERNEL_CENTER)*(img.cols>>XF_BITSHIFT(XF_NPPC1)) + (x4+j-FIGURE_KERNEL_CENTER)] = CORNER_COLOR;
+							}
+						}
 }
 
 int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & _src,
@@ -50,9 +42,10 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATIO
 	ap_uint<COORDINATE_BITS> maxY = MAX_VAL;
 
 	for(short int j = 1; j < (_src.rows - 1); j++ ){
-			for(short int i = 1; i < ((_src.cols>>XF_BITSHIFT(XF_NPPC1)) - 1); i++ ){
+			for(short int i = 10; i < ((_src.cols>>XF_BITSHIFT(XF_NPPC1)) - 10); i++ ){
 				//get the pixel brightness value
 				unsigned char pix = _src.data[j*(_src.cols>>XF_BITSHIFT(XF_NPPC1))+i];
+
 
 				//remap the coordinates, deleting radial lens distortion
 				point remapped_intercept = pixel_remap(j, i);
@@ -61,6 +54,9 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATIO
 				y = remapped_intercept.y;
 				x = remapped_intercept.x;
 
+				if (cornersCount == 500){
+					true;
+				}
 
 				if ((j > 0) && ((int)pix > 200)){
 					//add the coordinates to the array
@@ -88,27 +84,38 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATIO
 	bool borderError = false;
 
 	for(int i = 0; i < cornersCount; i++){
+		bool correct = false;
 
 		if ((absolute_distance(minX, corners[i][0]) < HANDICAP_CORNER) && (absolute_distance(minY, corners[i][1]) < HANDICAP_CORNER)){
 			v1 = true;
+			correct = true;
 		}
 		else if ((absolute_distance(maxX, corners[i][0]) < HANDICAP_CORNER) && (absolute_distance(minY, corners[i][1]) < HANDICAP_CORNER)){
 			v2 = true;
+			correct = true;
 		}
 		else if ((absolute_distance(minX, corners[i][0]) < HANDICAP_CORNER) && (absolute_distance(maxY, corners[i][1]) < HANDICAP_CORNER)){
 			v3 = true;
+			correct = true;
 		}
 		else if ((absolute_distance(maxX, corners[i][0]) < HANDICAP_CORNER) && (absolute_distance(maxY, corners[i][1]) < HANDICAP_CORNER)){
 			v4 = true;
+			correct = true;
 		}
 		else{
 			//verify if anyone of the corners if out of the "No error" bounds
 			if (!((absolute_distance(minX, corners[i][0]) < HANDICAP_ERROR)
 				|| (absolute_distance(maxX, corners[i][0]) < HANDICAP_ERROR)
 				|| (absolute_distance(minY, corners[i][1]) < HANDICAP_ERROR)
-				|| (absolute_distance(maxY, corners[i][1]) < HANDICAP_ERROR)))
+				|| (absolute_distance(maxY, corners[i][1]) < HANDICAP_ERROR))){
 				borderError = true;
+				_dst.data[(corners[i][1])*(_dst.cols>>XF_BITSHIFT(XF_NPPC1)) + (corners[i][0])] = ERROR_BORDER_COLOR;
+			} else
+				_dst.data[(corners[i][1])*(_dst.cols>>XF_BITSHIFT(XF_NPPC1)) + (corners[i][0])] = CORRECT_BORDER_COLOR;
+
 		}
+		if (correct)
+			_dst.data[(corners[i][1])*(_dst.cols>>XF_BITSHIFT(XF_NPPC1)) + (corners[i][0])] = CORRECT_CORNER_COLOR;
 	}
 
 	//to return the coordinates of the Region Of Interest
@@ -118,8 +125,7 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATIO
 	roi.x4 = maxX; roi.y4 = maxY;
 
 	//draw the supposed corner locations
-	draw_corners(_dst, minX, minY, maxX, minY, minX, maxY, maxX, maxY);
-
+	//draw_corners(_dst, minX, minY, maxX, maxY);
 
 
 	if ((!v1) || (!v2) || (!v3) || (!v4)){

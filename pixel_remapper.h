@@ -1,5 +1,7 @@
 //#include "xf_config_params.h"
 #include "ap_int.h"
+#include "ap_fixed.h"
+#include "hls_math.h" //round() function
 
 #define COORDINATE_BITS 11
 
