@@ -33,25 +33,24 @@ void draw_corners(xf::Mat<XF_8UC3, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & 
 int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & _src,
 						  xf::Mat<XF_8UC3, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATION> & _dst, ROI & roi)
 {
-	point corners[MAX_CORNERS];
-	short int cornersCount = 0;
+#pragma HLS PIPELINE
 
 	ap_uint<COORDINATE_BITS> minX = MAX_VAL;
 	ap_uint<COORDINATE_BITS> maxX = MAX_VAL;
 	ap_uint<COORDINATE_BITS> minY = MAX_VAL;
 	ap_uint<COORDINATE_BITS> maxY = MAX_VAL;
 
+
+	// find the max and min values
 	for(short int j = 1; j < (_src.rows - 1); j++ ){
-			corner_classification_label0:for(short int i = 10; i < ((_src.cols>>XF_BITSHIFT(XF_NPPC1)) - 10); i++ ){
+			for(short int i = 10; i < ((_src.cols>>XF_BITSHIFT(XF_NPPC1)) - 10); i++ ){
+#pragma HLS PIPELINE
 				//get the pixel brightness value
 				unsigned char pix = _src.data[j*(_src.cols>>XF_BITSHIFT(XF_NPPC1))+i];
 
 				if ((int)pix > 200){ // if its a white pixel
 					//remap the coordinates, deleting radial lens distortion
 					point remapped_intercept = pixel_remap(j, i);
-
-					//add the coordinates to the array
-					corners[cornersCount++] = remapped_intercept;
 
 					//find max and min values
 					if ((minX == MAX_VAL) || (minX > remapped_intercept.x))
@@ -72,40 +71,53 @@ int corner_classification(xf::Mat<TYPE, HEIGHT, WIDTH, NPIX_CORNER_CLASSIFICATIO
 	bool v4 = false;
 	bool borderError = false;
 
-	for(int i = 0; i < cornersCount; i++){
-		bool correct = false;
+	//corner and border classification
+	for(short int j = 1; j < (_src.rows - 1); j++ ){
+		for(short int i = 10; i < ((_src.cols>>XF_BITSHIFT(XF_NPPC1)) - 10); i++ ){
+#pragma HLS PIPELINE
+			//get the pixel brightness value
+			unsigned char pix = _src.data[j*(_src.cols>>XF_BITSHIFT(XF_NPPC1))+i];
 
-		if ((absolute_distance(minX, corners[i].x) < HANDICAP_CORNER) && (absolute_distance(minY, corners[i].y) < HANDICAP_CORNER)){
-			v1 = true;
-			correct = true;
-		}
-		else if ((absolute_distance(maxX, corners[i].x) < HANDICAP_CORNER) && (absolute_distance(minY, corners[i].y) < HANDICAP_CORNER)){
-			v2 = true;
-			correct = true;
-		}
-		else if ((absolute_distance(minX, corners[i].x) < HANDICAP_CORNER) && (absolute_distance(maxY, corners[i].y) < HANDICAP_CORNER)){
-			v3 = true;
-			correct = true;
-		}
-		else if ((absolute_distance(maxX, corners[i].x) < HANDICAP_CORNER) && (absolute_distance(maxY, corners[i].y) < HANDICAP_CORNER)){
-			v4 = true;
-			correct = true;
-		}
-		else{
-			//verify if anyone of the corners if out of the "No error" bounds
-			if (!((absolute_distance(minX, corners[i].x) < HANDICAP_ERROR)
-				|| (absolute_distance(maxX, corners[i].x) < HANDICAP_ERROR)
-				|| (absolute_distance(minY, corners[i].y) < HANDICAP_ERROR)
-				|| (absolute_distance(maxY, corners[i].y) < HANDICAP_ERROR))){
-				borderError = true;
-				_dst.data[(corners[i].y)*(_dst.cols>>XF_BITSHIFT(XF_NPPC1)) + (corners[i].x)] = ERROR_BORDER_COLOR;
-			} else
-				_dst.data[(corners[i].y)*(_dst.cols>>XF_BITSHIFT(XF_NPPC1)) + (corners[i].x)] = CORRECT_BORDER_COLOR;
+			if ((int)pix > 200){ // if its a white pixel
+				point remapped_intercept = pixel_remap(j, i);
+				bool correct = false;
 
-		}
-		if (correct)
-			_dst.data[(corners[i].y)*(_dst.cols>>XF_BITSHIFT(XF_NPPC1)) + (corners[i].x)] = CORRECT_CORNER_COLOR;
-	}
+				if ((absolute_distance(minX, remapped_intercept.x) < HANDICAP_CORNER) && (absolute_distance(minY, remapped_intercept.y) < HANDICAP_CORNER)){
+						v1 = true;
+						correct = true;
+					}
+					else if ((absolute_distance(maxX, remapped_intercept.x) < HANDICAP_CORNER) && (absolute_distance(minY, remapped_intercept.y) < HANDICAP_CORNER)){
+						v2 = true;
+						correct = true;
+					}
+					else if ((absolute_distance(minX, remapped_intercept.x) < HANDICAP_CORNER) && (absolute_distance(maxY, remapped_intercept.y) < HANDICAP_CORNER)){
+						v3 = true;
+						correct = true;
+					}
+					else if ((absolute_distance(maxX, remapped_intercept.x) < HANDICAP_CORNER) && (absolute_distance(maxY, remapped_intercept.y) < HANDICAP_CORNER)){
+						v4 = true;
+						correct = true;
+					}
+					else{
+						//verify if anyone of the corners if out of the "No error" bounds
+						if (!((absolute_distance(minX, remapped_intercept.x) < HANDICAP_ERROR)
+							|| (absolute_distance(maxX, remapped_intercept.x) < HANDICAP_ERROR)
+							|| (absolute_distance(minY, remapped_intercept.y) < HANDICAP_ERROR)
+							|| (absolute_distance(maxY, remapped_intercept.y) < HANDICAP_ERROR))){
+							borderError = true;
+							_dst.write(j*(WIDTH>>XF_BITSHIFT(XF_NPPC1))+i, ERROR_BORDER_COLOR);
+						} else
+							_dst.write(j*(WIDTH>>XF_BITSHIFT(XF_NPPC1))+i, CORRECT_BORDER_COLOR);
+
+					}
+					if (correct)
+						_dst.write(j*(WIDTH>>XF_BITSHIFT(XF_NPPC1))+i, CORRECT_BORDER_COLOR);
+			}
+
+
+
+		}//end col_loop_2
+	}//end row_loop_2
 
 	//to return the coordinates of the Region Of Interest
 	roi.x1 = minX; roi.y1 = minY;

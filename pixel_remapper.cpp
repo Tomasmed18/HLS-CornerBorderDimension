@@ -926,22 +926,18 @@ point pixel_remap(ap_uint<COORDINATE_BITS> x, ap_uint<COORDINATE_BITS> y){
 	point p;
 
 	BASE_CURVE_TYPE init_x = base_curve_x[x];
-	ap_fixed<32,15> mult_x = init_x * factors_x[y];
-	ap_fixed<32,15> rx1 = mult_x + OFFSET_X + intercept_x_offsets[y];
-	ap_uint<12> rx = hls::round(rx1) + y;
+	ap_fixed<32,15> mult_x = init_x * factors_x[y] + OFFSET_X + intercept_x_offsets[y];
+	p.x = hls::round(mult_x) + y;
 
 	BASE_CURVE_TYPE init_y = base_curve_y[y];
-	ap_fixed<32,15> mult_y = init_y * factors_y[x];
-	ap_fixed<32,15> rx2 = mult_y + OFFSET_Y + intercept_y_offsets[x];
-	ap_uint<12> ry = hls::round(rx2) + x;
+	ap_fixed<32,15> mult_y = init_y * factors_y[x] + OFFSET_Y + intercept_y_offsets[x];
+	p.y = hls::round(mult_y) + x;
 
-	if ((ry >= 1080)||(rx >= 1920)){
-		ry = 1079;
-		rx = 1919;
-	}
+//	if ((ry >= 1080)||(rx >= 1920)){
+//		ry = 1079;
+//		rx = 1919;
+//	}
 
-	p.x = rx;
-	p.y = ry;
 
 	return p;
 }
